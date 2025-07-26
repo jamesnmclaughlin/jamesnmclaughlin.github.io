@@ -1,14 +1,9 @@
 import React from 'react'
 import './App.css'
+import AppRouter from './AppRouter'
 
-const App:React.FC = () => {
-
-  return (
-    <>
-      <h1>Coming soon</h1>
-      <p>Working hard or hardly working...</p>
-    </>
-  )
+const App: React.FC = () => {
+    return <AppRouter />
 }
 
 export default App
