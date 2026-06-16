@@ -21,6 +21,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { Button } from "./components/ui/button";
+import "./App.css";
 
 type Tab = "map" | "feed" | "resources" | "profile";
 
@@ -77,18 +78,20 @@ function AppContent() {
   ];
 
   return (
-    <div className="size-full h-screen flex flex-col bg-gray-50">
+    <div className="size-full h-screen flex flex-col bg-gray-50 relative">
       {/* Header */}
-      <header className="bg-linear-to-r from-green-600 to-blue-600 text-white shadow-lg">
-        <div className="px-4 py-3">
+      <header className="absolute top-0 z-1000 w-screen">
+        {" "}
+        {/*bg-linear-to-r from-green-600 to-blue-600 text-white shadow-lg */}
+        <div className="px-4 py-3 glass">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 glass-effect rounded-3xl px-4 py-2">
               <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
                 <MapPin className="w-6 h-6 text-green-600" />
               </div>
               <div>
                 <h1 className="text-xl font-bold">Clean Streets UK</h1>
-                <p className="text-xs text-white/80">
+                <p className="text-xs text-black/80">
                   Welcome, {profile.username}!
                 </p>
               </div>
@@ -96,7 +99,7 @@ function AppContent() {
 
             <div className="flex items-center gap-3">
               {/* Points Display */}
-              <div className="hidden sm:flex items-center gap-2 bg-white/20 backdrop-blur px-3 py-1.5 rounded-full">
+              <div className="hidden sm:flex items-center gap-2 glass-effect px-3 py-1.5 rounded-full">
                 <span className="text-sm font-semibold">
                   {profile.points} pts
                 </span>
@@ -110,7 +113,7 @@ function AppContent() {
                 onClick={() => signOut()}
                 variant="outline"
                 size="sm"
-                className="hidden sm:flex bg-white/10 border-white/20 text-white hover:bg-white/20"
+                className="hidden sm:flex glass-effect rounded-3xl"
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 Sign Out
@@ -134,7 +137,7 @@ function AppContent() {
           {mobileMenuOpen && (
             <div className="sm:hidden mt-4 pt-4 border-t border-white/20">
               <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2 bg-white/20 backdrop-blur px-3 py-1.5 rounded-full">
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full glass-effect">
                   <span className="text-sm font-semibold">
                     {profile.points} pts
                   </span>
@@ -155,32 +158,6 @@ function AppContent() {
             </div>
           )}
         </div>
-
-        {/* Tabs */}
-        <div className="px-4 pb-2">
-          <div className="flex gap-2 overflow-x-auto">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => {
-                    setActiveTab(tab.id);
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${
-                    activeTab === tab.id
-                      ? "bg-white text-green-600 shadow-md"
-                      : "text-white/80 hover:bg-white/10"
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  {tab.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
       </header>
 
       {/* Content */}
@@ -188,7 +165,7 @@ function AppContent() {
         {activeTab === "map" && (
           <div className="size-full relative">
             {/* Report Mode Toggle */}
-            <div className="absolute top-4 right-4 z-1000 bg-white rounded-lg shadow-lg p-2 flex gap-2">
+            <div className="absolute top-24 right-4 z-1000 bg-white rounded-lg shadow-lg p-2 flex gap-2">
               <button
                 onClick={() => setReportMode("litter")}
                 className={`flex items-center gap-2 px-3 py-2 rounded-md transition-all ${
@@ -221,7 +198,7 @@ function AppContent() {
         )}
 
         {activeTab === "feed" && (
-          <div className="size-full overflow-y-auto p-4">
+          <div className="size-full overflow-y-auto p-4  pt-24">
             <div className="max-w-2xl mx-auto">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold">Community Feed</h2>
@@ -236,7 +213,7 @@ function AppContent() {
         )}
 
         {activeTab === "resources" && (
-          <div className="size-full overflow-y-auto p-4">
+          <div className="size-full overflow-y-auto p-4  pt-24">
             <div className="max-w-4xl mx-auto">
               <Resources />
             </div>
@@ -244,7 +221,7 @@ function AppContent() {
         )}
 
         {activeTab === "profile" && (
-          <div className="size-full overflow-y-auto p-4">
+          <div className="size-full overflow-y-auto p-4 pt-24">
             <div className="max-w-2xl mx-auto">
               <UserProfile />
             </div>
@@ -314,6 +291,34 @@ function AppContent() {
 
       {/* Toast Notifications */}
       <Toaster position="top-center" richColors />
+
+      <footer className="absolute bottom-0 z-1000 w-screen pb-8">
+        {/* Tabs */}
+        <div className="glass-effect rounded-3xl w-fit mx-auto">
+          <div className="flex gap-2 overflow-x-auto">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-3xl font-medium whitespace-nowrap transition-all ${
+                    activeTab === tab.id
+                      ? "bg-white text-green-600 shadow-md"
+                      : "text-black/80 hover:bg-white/10"
+                  }`}
+                >
+                  <Icon className="w-6 h-6 lg:w-4 lg:h-4" />
+                  <span className="hidden lg:block">{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

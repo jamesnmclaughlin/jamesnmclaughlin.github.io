@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -6,12 +6,13 @@ import {
   Popup,
   useMapEvents,
 } from "react-leaflet";
-import L from "leaflet";
+import L, { LatLng } from "leaflet";
 import { supabase, type BinReport, type LitterReport } from "../lib/supabase";
 import { useAuth } from "../contexts/AuthContext";
 import { AlertTriangle, CheckCircle2, Loader2, Trash2 } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 import MarkerClusterGroup from "react-leaflet-markercluster";
+import Routing from "./RoutingMachine";
 
 // Fix Leaflet default icon issue
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -56,7 +57,9 @@ export function LitterMap({
   const [loading, setLoading] = useState(true);
   const { user, profile } = useAuth();
 
-  // Use user's location if available, otherwise default to London, UK
+  const [navigateToPoint, setNavigateToPoint] = useState<LatLng>();
+
+  // Use user's preferred location if available, otherwise default to London, UK
   const [center] = useState<[number, number]>(() => {
     if (profile?.location_lat && profile?.location_lng) {
       return [profile.location_lat, profile.location_lng];
@@ -327,6 +330,17 @@ export function LitterMap({
     });
   };
 
+  const directions: LatLng[] | undefined = useMemo(() => {
+    if (!navigateToPoint) return;
+
+    let start = new LatLng(center[0], center[1]);
+
+    if (currentPosition)
+      start = new LatLng(currentPosition.lat, currentPosition.lng);
+
+    return [start, navigateToPoint];
+  }, [navigateToPoint, center, currentPosition]);
+
   return (
     <div className="relative w-full h-full">
       {loading && (
@@ -345,6 +359,15 @@ export function LitterMap({
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+        {directions !== undefined && (
+          <Routing
+            points={directions}
+            bounds={[
+              [51.486898, -3.204137],
+              [51.4816546, -3.1791934],
+            ]}
+          />
+        )}
 
         <MapClickHandler onMapClick={onReportClick} />
 
@@ -550,6 +573,17 @@ export function LitterMap({
                           Damaged
                         </button>
                       </div>
+                      <button
+                        onClick={() =>
+                          setNavigateToPoint(
+                            new LatLng(bin.latitude, bin.longitude),
+                          )
+                        }
+                        className="px-2 py-1 bg-gray-500 text-white rounded text-xs hover:bg-gray-600"
+                        disabled={bin.status === "damaged"}
+                      >
+                        Directions
+                      </button>
                     </div>
                   )}
                 </div>
